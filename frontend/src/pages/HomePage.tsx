@@ -76,13 +76,24 @@ export function HomePage() {
           <li
             key={book.id}
             className="book-card"
+            onClick={() => toggleBook(book.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                toggleBook(book.id)
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
 
             <input
               type="checkbox"
               className="book-checkbox"
               checked={selectedBooks.includes(book.id)}
-              onChange={() => toggleBook(book.id)}
+              readOnly
+              tabIndex={-1}
+              aria-hidden="true"
             />
 
             <div className="book-card-content">
