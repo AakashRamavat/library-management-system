@@ -6,6 +6,10 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
-    "dev:api": "cd backend && npm run dev"
+    "dev:api": "cd backend && npm run dev",
+    "dev": "concurrently -n api,web \"npm run dev:api\" \"cd frontend && npm run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }
