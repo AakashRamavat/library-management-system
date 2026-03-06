@@ -1,10 +1,21 @@
 import { sequelize } from '../db/client';
 import { Book, User, Transaction } from '../db/models';
 import { ApiError } from '../middleware/error-handler';
-import type { CheckoutOrReturnInput } from '../validators/books.validator';
+import type { CheckoutOrReturnInput, ListBooksQuery } from '../validators/books.validator';
 
-export async function listBooks(): Promise<Book[]> {
-  return Book.findAll({
+export interface ListBooksResult {
+  items: Book[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function listBooks(query: ListBooksQuery): Promise<ListBooksResult> {
+  const { page, limit } = query;
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await Book.findAndCountAll({
     include: [
       {
         model: User,
@@ -13,7 +24,18 @@ export async function listBooks(): Promise<Book[]> {
       },
     ],
     order: [['title', 'ASC']],
+    limit,
+    offset,
   });
+
+  const totalPages = Math.ceil(count / limit) || 1;
+  return {
+    items: rows,
+    total: count,
+    page,
+    limit,
+    totalPages,
+  };
 }
 
 export async function checkoutBook(

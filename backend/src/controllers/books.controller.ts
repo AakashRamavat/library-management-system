@@ -4,14 +4,16 @@ import { ApiError } from '../middleware/error-handler';
 import * as booksService from '../services/books.service';
 import { successResponse } from '../utils/response';
 import type { CheckoutOrReturnInput } from '../validators/books.validator';
+import { validateListBooksQuery } from '../validators/books.validator';
 
 export async function listBooks(
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const data = await booksService.listBooks();
+    const query = validateListBooksQuery(req.query);
+    const data = await booksService.listBooks(query);
     successResponse(res, data);
   } catch (err) {
     next(err);

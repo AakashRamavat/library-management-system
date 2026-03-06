@@ -63,6 +63,7 @@ export class Book extends Model<InferAttributes<Book>, InferCreationAttributes<B
   declare isbn: string | null;
   declare status: 'AVAILABLE' | 'CHECKED_OUT';
   declare holderId: string | null;
+  declare thumbnailUrl: string | null;
 }
 
 Book.init(
@@ -92,6 +93,10 @@ Book.init(
     },
     holderId: {
       type: DataTypes.UUID,
+      allowNull: true,
+    },
+    thumbnailUrl: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },
