@@ -1,0 +1,95 @@
+.form-page {
+  max-width: 520px;
+}
+
+.form-hero {
+  margin-bottom: 32px;
+}
+
+.form-title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.form-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.form-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+}
+
+.form-card .btn-primary {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.success-message {
+  color: var(--color-available);
+  font-size: 0.875rem;
+  margin: 8px 0 0;
+}
+
+.select-all {
+  font-size: 0.875rem;
+  padding: 0;
+  margin-bottom: 8px;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.select-all:hover {
+  color: var(--color-primary-hover, var(--color-primary));
+}
+
+.form-hint {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.book-list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.checkbox-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.checkbox-item {
+  margin: 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.checkbox-label input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+}
+
+.checkbox-text {
+  flex: 1;
+}
