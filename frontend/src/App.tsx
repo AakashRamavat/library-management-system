@@ -3,7 +3,6 @@ import { Layout } from './components/Layout';
 import { RequireAuth } from './components/RequireAuth';
 import { HomePage } from './pages/HomePage';
 import { MyBooksPage } from './pages/MyBooksPage';
-import { ReturnPage } from './pages/ReturnPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 
@@ -25,14 +24,6 @@ function App() {
             element={
               <RequireAuth>
                 <MyBooksPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="return"
-            element={
-              <RequireAuth>
-                <ReturnPage />
               </RequireAuth>
             }
           />

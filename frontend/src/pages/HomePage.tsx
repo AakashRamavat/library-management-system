@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useBooksStore } from '../stores/booksStore'
 import { CheckoutModal } from '../components/CheckoutModal'
-import './HomePage.css'
+import './Dashboard.css'
 
 const DEFAULT_LIMIT = 10
 
@@ -9,13 +9,11 @@ export function HomePage() {
 
   const {
     books,
-    total,
-    totalPages,
     fetchBooks,
     checkout
   } = useBooksStore()
 
-  const [page, setPage] = useState(1)
+  const [page] = useState(1)
 
   const [selectedBooks, setSelectedBooks] = useState<string[]>([])
 

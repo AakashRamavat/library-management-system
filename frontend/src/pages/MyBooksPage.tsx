@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useBooksStore } from '../stores/booksStore'
 import { useAuthStore } from '../stores/authStore'
 import { ReturnModal } from '../components/ReturnModal'
-import './HomePage.css'
+import './Dashboard.css'
 
 export function MyBooksPage() {
 
@@ -102,14 +102,14 @@ export function MyBooksPage() {
 
       {showModal && (
 
-<ReturnModal
-selectedBooks={books
-  .filter(b => selectedBooks.includes(b.id))
-  .map(b => ({ id: b.id, title: b.title }))
-}
-onCancel={cancelReturn}
-onConfirm={confirmReturn}
-/>
+      <ReturnModal
+        selectedBooks={books
+          .filter(b => selectedBooks.includes(b.id))
+          .map(b => ({ id: b.id, title: b.title }))
+        }
+      onCancel={cancelReturn}
+      onConfirm={confirmReturn}
+      />
 
       )}
 

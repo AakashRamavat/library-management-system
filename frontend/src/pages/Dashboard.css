@@ -1,27 +1,4 @@
-.hero {
-  text-align: center;
-  margin-bottom: 48px;
-}
 
-.hero-title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin: 0 0 8px;
-}
-
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.empty-state {
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: 1.125rem;
-  padding: 48px 22px;
-}
 
 .book-grid {
   list-style: none;
@@ -95,30 +72,6 @@
   margin: 0 0 12px;
 }
 
-.book-holder {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  margin: 8px 0 0;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 40px;
-  flex-wrap: wrap;
-}
-
-.btn-pagination {
-  min-width: 100px;
-}
-
-.pagination-info {
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary);
-}
-
 @media (min-width: 734px) {
   .book-grid {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -140,15 +93,6 @@
   justify-content:end;
   align-items:center;
   margin-bottom:16px;
-}
-
-.books-actions-left{
-  display:flex;
-  gap:10px;
-}
-
-.books-actions-right{
-  display:flex;
 }
 
 .book-grid{
@@ -208,11 +152,6 @@
   gap:10px;
 }
 
-.selected-books{
-  background:#f5f5f5;
-  padding:10px;
-  border-radius:6px;
-}
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -250,7 +189,6 @@
   margin-bottom: 4px;
   font-weight: 500;
 }
-/* ---------------- MOBILE / TABLET DESIGN ---------------- */
 
 @media (max-width: 768px) {
 
@@ -275,7 +213,6 @@
     left: 10px;
   }
 
-  /* IMAGE FIRST */
   .book-card-thumbnail {
     order: 1;
     width: 100%;
@@ -302,7 +239,6 @@
     font-size: 12px;
   }
 
-  /* TEXT SECOND */
   .book-card-content {
     order: 2;
     text-align: center;
@@ -319,7 +255,6 @@
     color: #666;
   }
 
-  /* RETURN BUTTON RIGHT + SMALL */
   .books-header {
     display: flex;
     justify-content: flex-end;
@@ -333,9 +268,6 @@
   }
 
 }
-
-
-/* -------- VERY SMALL MOBILE -------- */
 
 @media (max-width: 420px) {
 
