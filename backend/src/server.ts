@@ -1,10 +1,8 @@
-import dotenv from 'dotenv';
+import './load-env';
 
 import { createApp } from './app';
 import { initDb, sequelize } from './db/client';
 import './db/models';
-
-dotenv.config();
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 

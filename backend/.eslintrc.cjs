@@ -13,6 +13,8 @@ module.exports = {
     'prettier',
   ],
   rules: {
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'import/order': [
       'error',
       {
