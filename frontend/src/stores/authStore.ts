@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { api } from '../api/client';
+import { isAccessTokenExpired } from '../utils/jwt';
 
 export interface User {
   id: string;
@@ -18,12 +19,16 @@ interface AuthState {
   signUp: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => void;
   setTokens: (access: string, refresh: string, user: User) => void;
+  /** Refresh access token if expired; call once on app load to avoid 401s. */
+  ensureValidToken: () => Promise<void>;
   clearError: () => void;
 }
 
+const API_BASE = '/api';
+
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
@@ -85,6 +90,28 @@ export const useAuthStore = create<AuthState>()(
       },
       logout: () =>
         set({ user: null, accessToken: null, refreshToken: null, error: null }),
+      ensureValidToken: async () => {
+        const { accessToken, refreshToken, setTokens, logout } = get();
+        if (!accessToken || !refreshToken) return;
+        if (!isAccessTokenExpired(accessToken)) return;
+        try {
+          const res = await fetch(`${API_BASE}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+          });
+          const json = (await res.json()) as
+            | { status: true; data: { user: User; accessToken: string; refreshToken: string } }
+            | { status: false };
+          if (json.status && json.data) {
+            setTokens(json.data.accessToken, json.data.refreshToken, json.data.user);
+          } else {
+            logout();
+          }
+        } catch {
+          logout();
+        }
+      },
       clearError: () => set({ error: null }),
     }),
     { name: 'library-auth' },

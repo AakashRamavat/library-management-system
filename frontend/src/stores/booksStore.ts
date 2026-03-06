@@ -55,6 +55,7 @@ export const useBooksStore = create<BooksState>((set, get) => ({
   isLoading: false,
   error: null,
   fetchBooks: async (page = 1, limit = DEFAULT_LIMIT) => {
+    if (get().isLoading) return;
     const token = useAuthStore.getState().accessToken;
     if (!token) {
       set({ books: [], total: 0, totalPages: 0, error: 'Please log in to view books.' });

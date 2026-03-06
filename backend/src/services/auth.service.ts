@@ -10,7 +10,7 @@ const SALT_ROUNDS = 10;
 function getJwtConfig() {
   const accessSecret = process.env.JWT_ACCESS_SECRET;
   const refreshSecret = process.env.JWT_REFRESH_SECRET;
-  const accessExpiresIn = process.env.JWT_ACCESS_EXPIRES_IN ?? '15m';
+  const accessExpiresIn = process.env.JWT_ACCESS_EXPIRES_IN ?? '1h';
   const refreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN ?? '7d';
   if (!accessSecret || !refreshSecret) {
     throw new Error('JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be set');

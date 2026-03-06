@@ -119,14 +119,14 @@ export function HomePage() {
 
       {showModal && (
 
-<CheckoutModal
-selectedBooks={books
-  .filter(b => selectedBooks.includes(b.id))
-  .map(b => ({ id: b.id, title: b.title }))
-}
-onCancel={cancelCheckout}
-onConfirm={confirmCheckout}
-/>
+        <CheckoutModal
+          selectedBooks={books
+            .filter(b => selectedBooks.includes(b.id))
+            .map(b => ({ id: b.id, title: b.title }))
+          }
+          onCancel={cancelCheckout}
+          onConfirm={confirmCheckout}
+        />
 
       )}
 

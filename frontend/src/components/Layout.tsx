@@ -1,10 +1,15 @@
+import { useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import './Layout.css';
 
 export function Layout() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, ensureValidToken } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    ensureValidToken();
+  }, [ensureValidToken]);
 
   const handleLogout = () => {
     logout();
