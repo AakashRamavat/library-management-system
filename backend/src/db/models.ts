@@ -13,6 +13,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare email: string;
   declare name: string | null;
   declare memberId: string | null;
+  declare passwordHash: string | null;
 }
 
 User.init(
@@ -35,6 +36,10 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
       unique: true,
+    },
+    passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
