@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "seed": "node --import tsx scripts/seed.ts",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "jest --watch"
   },
   "engines": {

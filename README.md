@@ -76,3 +76,4 @@ The app will be at http://localhost:5173. Sign up or log in, then browse books, 
 - **Stop DB**: `npm run db:down`
 - **DB logs**: `npm run db:logs`
 - **Backend tests**: `cd backend && npm test` (requires Postgres and `.env` or test defaults in `jest.setup.ts`)
+- **Frontend tests**: `cd frontend && npm test`

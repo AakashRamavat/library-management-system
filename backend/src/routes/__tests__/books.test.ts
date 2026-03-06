@@ -104,4 +104,64 @@ describe('Books API', () => {
 
     expect(secondReturn.status).toBe(400);
   });
+
+  it('rejects checkout with empty bookIds with 400', async () => {
+    const res = await request(app)
+      .post('/api/books/checkout')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ bookIds: [] });
+
+    expect(res.status).toBe(400);
+    expect(res.body.status).toBe(false);
+    expect(res.body.errorMessage).toMatch(/at least one/i);
+  });
+
+  it('rejects checkout with invalid bookId format with 400', async () => {
+    const res = await request(app)
+      .post('/api/books/checkout')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ bookIds: ['not-a-uuid'] });
+
+    expect(res.status).toBe(400);
+    expect(res.body.status).toBe(false);
+  });
+
+  it('rejects checkout for non-existent book with 404', async () => {
+    const fakeId = '00000000-0000-0000-0000-000000000000';
+    const res = await request(app)
+      .post('/api/books/checkout')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ bookIds: [fakeId] });
+
+    expect(res.status).toBe(404);
+    expect(res.body.errorMessage).toMatch(/not found/i);
+  });
+
+  it('rejects return when book is held by another user with 403', async () => {
+    const book = await Book.create({
+      title: 'Held By Alice',
+      author: 'Test',
+      status: 'AVAILABLE',
+    });
+
+    await request(app)
+      .post('/api/books/checkout')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ bookIds: [book.id] })
+      .expect(201);
+
+    const bobRes = await request(app)
+      .post('/api/auth/signup')
+      .send({ email: 'bob@example.com', password: 'password1234', name: 'Bob' });
+    expect(bobRes.status).toBe(201);
+    const bobToken = bobRes.body.data.accessToken;
+
+    const res = await request(app)
+      .post('/api/books/return')
+      .set('Authorization', `Bearer ${bobToken}`)
+      .send({ bookIds: [book.id] });
+
+    expect(res.status).toBe(403);
+    expect(res.body.errorMessage).toMatch(/only return books you have checked out/i);
+  });
 });
