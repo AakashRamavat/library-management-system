@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { RequireAuth } from './components/RequireAuth';
 import { HomePage } from './pages/HomePage';
-import { CheckoutPage } from './pages/CheckoutPage';
+import { MyBooksPage } from './pages/MyBooksPage';
 import { ReturnPage } from './pages/ReturnPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
@@ -21,10 +21,10 @@ function App() {
             }
           />
           <Route
-            path="checkout"
+            path="my_books"
             element={
               <RequireAuth>
-                <CheckoutPage />
+                <MyBooksPage />
               </RequireAuth>
             }
           />

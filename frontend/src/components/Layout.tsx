@@ -19,9 +19,8 @@ export function Layout() {
             Library
           </Link>
           <nav className="nav">
-            <Link to="/">Books</Link>
-            <Link to="/checkout">Check out</Link>
-            <Link to="/return">Return</Link>
+            <Link to="/">Available Books</Link>
+            <Link to="/my_books">My Books</Link>
           </nav>
           <div className="header-actions">
             {user ? (

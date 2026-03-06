@@ -1,29 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useBooksStore } from '../stores/booksStore'
-import { CheckoutModal } from '../components/CheckoutModal'
+import { useAuthStore } from '../stores/authStore'
+import { ReturnModal } from '../components/ReturnModal'
 import './HomePage.css'
 
-const DEFAULT_LIMIT = 10
+export function MyBooksPage() {
 
-export function HomePage() {
+  const { books, returnBook } = useBooksStore()
 
-  const {
-    books,
-    total,
-    totalPages,
-    fetchBooks,
-    checkout
-  } = useBooksStore()
-
-  const [page, setPage] = useState(1)
+  const { user } = useAuthStore()
 
   const [selectedBooks, setSelectedBooks] = useState<string[]>([])
-
   const [showModal, setShowModal] = useState(false)
 
-  useEffect(() => {
-    fetchBooks(page, DEFAULT_LIMIT)
-  }, [page])
+  const myBooks = books.filter(
+    b => b.holderId === user?.id
+  )
 
   const toggleBook = (id: string) => {
 
@@ -34,46 +26,35 @@ export function HomePage() {
     )
   }
 
-  const openCheckout = () => {
-    setShowModal(true)
-  }
-
-  const cancelCheckout = () => {
+  const cancelReturn = () => {
     setShowModal(false)
     setSelectedBooks([])
   }
 
-  const confirmCheckout = async () => {
+  const confirmReturn = async () => {
 
-    await checkout(selectedBooks)
+    await returnBook(selectedBooks)
 
     setSelectedBooks([])
     setShowModal(false)
   }
-
-  const availableBooks = books.filter(
-    b => b.status === 'AVAILABLE'
-  )
 
   return (
     <div className="container">
-
-
+     
       <div className="books-header">
-
         <button
           className="btn-primary"
           disabled={!selectedBooks.length}
-          onClick={openCheckout}
+          onClick={() => setShowModal(true)}
         >
-          Checkout
+          Return
         </button>
-
       </div>
 
       <ul className="book-grid">
 
-        {availableBooks.map(book => (
+        {myBooks.map(book => (
 
           <li
             key={book.id}
@@ -121,13 +102,13 @@ export function HomePage() {
 
       {showModal && (
 
-<CheckoutModal
+<ReturnModal
 selectedBooks={books
   .filter(b => selectedBooks.includes(b.id))
   .map(b => ({ id: b.id, title: b.title }))
 }
-onCancel={cancelCheckout}
-onConfirm={confirmCheckout}
+onCancel={cancelReturn}
+onConfirm={confirmReturn}
 />
 
       )}
