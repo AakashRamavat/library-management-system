@@ -52,29 +52,31 @@ describe('Books API', () => {
     expect(res.status).toBe(401);
   });
 
-  it('allows checking out an available book and prevents double checkout', async () => {
-    const book = await Book.findOne();
-    if (!book) {
-      throw new Error('Expected at least one book');
+  it('allows checking out multiple books and prevents double checkout', async () => {
+    const books = await Book.findAll({ limit: 2 });
+    if (books.length < 2) {
+      throw new Error('Expected at least two books');
     }
+    const [firstBook, secondBook] = books;
 
     const first = await request(app)
       .post('/api/books/checkout')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bookId: book.id });
+      .send({ bookIds: [firstBook.id, secondBook.id] });
 
     expect(first.status).toBe(201);
+    expect(first.body.data.message).toMatch(/2 books checked out/i);
 
     const second = await request(app)
       .post('/api/books/checkout')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bookId: book.id });
+      .send({ bookIds: [firstBook.id] });
 
     expect(second.status).toBe(400);
     expect(second.body.errorMessage).toMatch(/already checked out/i);
   });
 
-  it('allows returning a checked-out book and prevents returning if not checked out', async () => {
+  it('allows returning multiple checked-out books and prevents returning if not checked out', async () => {
     const book = await Book.create({
       title: 'Refactoring',
       author: 'Martin Fowler',
@@ -84,20 +86,21 @@ describe('Books API', () => {
     await request(app)
       .post('/api/books/checkout')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bookId: book.id })
+      .send({ bookIds: [book.id] })
       .expect(201);
 
     const returned = await request(app)
       .post('/api/books/return')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bookId: book.id });
+      .send({ bookIds: [book.id] });
 
     expect(returned.status).toBe(201);
+    expect(returned.body.data.message).toMatch(/Book returned successfully/i);
 
     const secondReturn = await request(app)
       .post('/api/books/return')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bookId: book.id });
+      .send({ bookIds: [book.id] });
 
     expect(secondReturn.status).toBe(400);
   });

@@ -3,7 +3,7 @@ import { Router } from 'express';
 import * as booksController from '../controllers/books.controller';
 import { auth } from '../middleware/auth';
 import { validate } from '../middleware/validate';
-import { validateCheckoutOrReturnBody } from '../validators/books.validator';
+import { validateCheckoutBody, validateReturnBody } from '../validators/books.validator';
 
 export const router = Router();
 
@@ -12,13 +12,13 @@ router.get('/', auth, booksController.listBooks);
 router.post(
   '/checkout',
   auth,
-  validate(validateCheckoutOrReturnBody),
-  booksController.checkoutBook,
+  validate(validateCheckoutBody),
+  booksController.checkoutBooks,
 );
 
 router.post(
   '/return',
   auth,
-  validate(validateCheckoutOrReturnBody),
-  booksController.returnBook,
+  validate(validateReturnBody),
+  booksController.returnBooks,
 );

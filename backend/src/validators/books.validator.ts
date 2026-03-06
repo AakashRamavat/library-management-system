@@ -1,13 +1,26 @@
 import { z } from 'zod';
 
-export const checkoutOrReturnBodySchema = z.object({
-  bookId: z.string().min(1, 'Book ID is required'),
+const bookIdsSchema = z
+  .array(z.string().uuid('Invalid book ID'))
+  .min(1, 'At least one book is required');
+
+export const checkoutBodySchema = z.object({
+  bookIds: bookIdsSchema,
 });
 
-export type CheckoutOrReturnInput = z.infer<typeof checkoutOrReturnBodySchema>;
+export const returnBodySchema = z.object({
+  bookIds: bookIdsSchema,
+});
 
-export function validateCheckoutOrReturnBody(body: unknown): CheckoutOrReturnInput {
-  return checkoutOrReturnBodySchema.parse(body);
+export type CheckoutInput = z.infer<typeof checkoutBodySchema>;
+export type ReturnInput = z.infer<typeof returnBodySchema>;
+
+export function validateCheckoutBody(body: unknown): CheckoutInput {
+  return checkoutBodySchema.parse(body);
+}
+
+export function validateReturnBody(body: unknown): ReturnInput {
+  return returnBodySchema.parse(body);
 }
 
 const DEFAULT_PAGE = 1;

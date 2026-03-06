@@ -1,7 +1,7 @@
 import { sequelize } from '../db/client';
 import { Book, User, Transaction } from '../db/models';
 import { ApiError } from '../middleware/error-handler';
-import type { CheckoutOrReturnInput, ListBooksQuery } from '../validators/books.validator';
+import type { CheckoutInput, ListBooksQuery, ReturnInput } from '../validators/books.validator';
 
 export interface ListBooksResult {
   items: Book[];
@@ -38,92 +38,93 @@ export async function listBooks(query: ListBooksQuery): Promise<ListBooksResult>
   };
 }
 
-export async function checkoutBook(
-  input: CheckoutOrReturnInput,
+export async function checkoutBooks(
+  input: CheckoutInput,
   userId: string,
-): Promise<void> {
+): Promise<{ checkedOut: number }> {
+  let checkedOut = 0;
   await sequelize.transaction(async (t) => {
-    const book = await Book.findByPk(input.bookId, {
-      transaction: t,
-      lock: t.LOCK.UPDATE,
-    });
-
-    if (!book) {
-      throw new ApiError({ statusCode: 404, message: 'Book not found' });
-    }
-
-    if (book.status === 'CHECKED_OUT') {
-      throw new ApiError({
-        statusCode: 400,
-        message: 'Book is already checked out',
-      });
-    }
-
     const user = await User.findByPk(userId, { transaction: t });
     if (!user) {
       throw new ApiError({ statusCode: 401, message: 'User not found' });
     }
 
-    await book.update(
-      {
-        status: 'CHECKED_OUT',
-        holderId: user.id,
-      },
-      { transaction: t },
-    );
+    for (const bookId of input.bookIds) {
+      const book = await Book.findByPk(bookId, {
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
 
-    await Transaction.create(
-      {
-        action: 'CHECKOUT',
-        bookId: book.id,
-        userId: user.id,
-      },
-      { transaction: t },
-    );
+      if (!book) {
+        throw new ApiError({ statusCode: 404, message: `Book not found: ${bookId}` });
+      }
+
+      if (book.status === 'CHECKED_OUT') {
+        throw new ApiError({
+          statusCode: 400,
+          message: `"${book.title}" is already checked out`,
+        });
+      }
+
+      await book.update(
+        { status: 'CHECKED_OUT', holderId: user.id },
+        { transaction: t },
+      );
+      await Transaction.create(
+        { action: 'CHECKOUT', bookId: book.id, userId: user.id },
+        { transaction: t },
+      );
+      checkedOut += 1;
+    }
   });
+  return { checkedOut };
 }
 
-export async function returnBook(
-  input: CheckoutOrReturnInput,
+export async function returnBooks(
+  input: ReturnInput,
   userId: string,
-): Promise<void> {
+): Promise<{ returned: number }> {
+  let returned = 0;
   await sequelize.transaction(async (t) => {
-    const book = await Book.findByPk(input.bookId, {
-      transaction: t,
-      lock: t.LOCK.UPDATE,
-    });
-
-    if (!book) {
-      throw new ApiError({ statusCode: 404, message: 'Book not found' });
-    }
-
-    if (book.status === 'AVAILABLE') {
-      throw new ApiError({
-        statusCode: 400,
-        message: 'Book is not currently checked out',
-      });
-    }
-
     const user = await User.findByPk(userId, { transaction: t });
     if (!user) {
       throw new ApiError({ statusCode: 401, message: 'User not found' });
     }
 
-    await book.update(
-      {
-        status: 'AVAILABLE',
-        holderId: null,
-      },
-      { transaction: t },
-    );
+    for (const bookId of input.bookIds) {
+      const book = await Book.findByPk(bookId, {
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
 
-    await Transaction.create(
-      {
-        action: 'RETURN',
-        bookId: book.id,
-        userId: user.id,
-      },
-      { transaction: t },
-    );
+      if (!book) {
+        throw new ApiError({ statusCode: 404, message: `Book not found: ${bookId}` });
+      }
+
+      if (book.status === 'AVAILABLE') {
+        throw new ApiError({
+          statusCode: 400,
+          message: `"${book.title}" is not currently checked out`,
+        });
+      }
+
+      if (book.holderId !== user.id) {
+        throw new ApiError({
+          statusCode: 403,
+          message: `You can only return books you have checked out`,
+        });
+      }
+
+      await book.update(
+        { status: 'AVAILABLE', holderId: null },
+        { transaction: t },
+      );
+      await Transaction.create(
+        { action: 'RETURN', bookId: book.id, userId: user.id },
+        { transaction: t },
+      );
+      returned += 1;
+    }
   });
+  return { returned };
 }
