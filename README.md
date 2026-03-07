@@ -1,5 +1,7 @@
 # Library Management System
 
+Demo: https://www.loom.com/share/8e1cc8efb7d04e36a35fd7e164c91d47
+
 Monorepo: React (Vite) frontend + Node.js/Express API + PostgreSQL.
 
 ---
